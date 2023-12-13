@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { increment } from "../app/features/counterSlice";
-import { addNewEmployee } from "../app/features/employeeDetailsSlice";
+import { addNewEmployee,deleteEmployee,updateEmployee } from "../app/features/employeeDetailsSlice";
+import Modal from "./Modal";
 
 const Home = () => {
   const [index, setIndex] = useState(0);
+  const [modelState,setModelState] = useState(false)
   const count = useAppSelector((state) => state.counter.value);
   const employeeData = useAppSelector((state) => state.employee.employeeData);
   const dispatch = useAppDispatch();
@@ -15,9 +17,15 @@ const Home = () => {
     }
   };
 
+  const updateData ={
+    name:"update",department:"IT",age:20,salary:50000,url:""
+  }
+
   return (
-    <div className="p-4 md:px-6 md:py-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 md:gap-y-index md:gap-x-6">
+    <>
+    <div className={`p-4 md:px-6 md:py-10 ${modelState ? "opacity-30" : ""} relative`}>
+      <button onClick={()=>setModelState(!modelState)} className="px-8 mb-4 py-3 rounded-md bg-slate-600 text-white text-[20px] font-bold">Click</button>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 md:gap-y-index md:gap-x-6 z-3">
         <div className="h-full md:h-[800px] bg-slate-100 rounded-md shadow-md p-4 md:px-6 md:py-10">
           {employeeData.map((item, i) => (
             <div
@@ -41,7 +49,7 @@ const Home = () => {
           ))}
         </div>
         <div className="h-full md:h-[800px] bg-slate-100 rounded-md shadow-md px-2 py-4 md:px-6 md:py-10 ">
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center ">
             <img
               src={
                 employeeData[index].url
@@ -49,7 +57,7 @@ const Home = () => {
                   : "https://cdn-icons-png.flaticon.com/512/6997/6997490.png"
               }
               alt=""
-              className="w-[200px] h-[200px] rounded-lg bg-[white]"
+              className="w-[200px] h-[200px] rounded-lg"
             />
             <div className="mt-6 flex flex-col items-center justify-center">
               <h1 className="text-[25px] font-bold mt-3">
@@ -70,11 +78,18 @@ const Home = () => {
                   Department:-{employeeData[index].department}
                 </h1>
               )}
+              <div className="mt-3 flex items-center justify-center gap-x-4">
+                <button onClick={()=>dispatch(updateEmployee({index,user:updateData}))} className="px-6 py-3 bg-green-200 text-white rounded-lg font-bold hover:bg-green-500">Update</button>
+                <button onClick={()=>dispatch(deleteEmployee(index))} className="px-6 py-3 bg-red-200 text-white rounded-lg font-bold hover:bg-red-500">Delete</button>
+
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    {modelState && <Modal setModelState={setModelState} />}
+    </>
   );
 };
 

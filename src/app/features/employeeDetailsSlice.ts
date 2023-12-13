@@ -10,6 +10,11 @@ interface User  {
     url? : string
 }
 
+type updateEmployee = {
+    index : number,
+    user : User
+}
+
 const initialState  = {
     employeeData  : [
         {name:"John Doe",department:"IT"},
@@ -27,11 +32,31 @@ const employeeSlice = createSlice ({
     reducers : {
         addNewEmployee : (state,action : PayloadAction <User>)=>{
             state.employeeData.push(action.payload)
+        },
+        deleteEmployee : (state,action : PayloadAction <number>)=>{
+            const index = action.payload;
+           state.employeeData= state.employeeData.filter((_,i)=>i!==index)
+        },
+        updateEmployee : (state,action : PayloadAction<updateEmployee>)=>{
+            const { index, user } = action.payload;
+    const { name, department, age, salary, url } = user;
+            state.employeeData = state.employeeData.map((employee,i)=>(
+                i === index
+            ? {
+                  ...employee,
+                  name: name ? name.trim() : employee.name,
+                  department: department ? department.trim() : employee.department,
+                  age: age !== undefined || NaN ? age : employee.age,
+                  salary: salary !== undefined || NaN ? salary : employee.salary,
+                  url: url ? url : employee.url,
+              }
+            : employee
+            ))
         }
     }
 })
 
-export const {addNewEmployee} = employeeSlice.actions
+export const {addNewEmployee,deleteEmployee,updateEmployee} = employeeSlice.actions
 
 export default employeeSlice.reducer
 
