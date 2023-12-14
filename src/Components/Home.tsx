@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { increment } from "../app/features/counterSlice";
 import { addNewEmployee,deleteEmployee,updateEmployee } from "../app/features/employeeDetailsSlice";
 import Modal from "./Modal";
+import { useGetPokemonByNameQuery } from "../app/features/FetchData";
 
 const Home = () => {
   const [index, setIndex] = useState(0);
@@ -10,6 +11,8 @@ const Home = () => {
   const count = useAppSelector((state) => state.counter.value);
   const employeeData = useAppSelector((state) => state.employee.employeeData);
   const dispatch = useAppDispatch();
+
+  const {data,error,isLoading} = useGetPokemonByNameQuery("ditto")
 
   const handleIndex = (i: number) => {
     if (index < employeeData.length) {
@@ -21,10 +24,13 @@ const Home = () => {
     name:"update",department:"IT",age:20,salary:50000,url:""
   }
 
+
+
   return (
     <>
     <div className={`p-4 md:px-6 md:py-10 ${modelState ? "opacity-30" : ""} relative`}>
       <button onClick={()=>setModelState(!modelState)} className="px-8 mb-4 py-3 rounded-md bg-slate-600 text-white text-[20px] font-bold">Click</button>
+      {data && <h1>{data.name}</h1>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 md:gap-y-index md:gap-x-6 z-3">
         <div className="h-full md:h-[800px] bg-slate-100 rounded-md shadow-md p-4 md:px-6 md:py-10">
           {employeeData.map((item, i) => (
